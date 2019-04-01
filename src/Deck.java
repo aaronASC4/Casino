@@ -1,29 +1,42 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Random;
 
-public class Deck {
-	private ArrayList<Card> deck;
-	
-	public Deck() {
-		deck = new ArrayList<Card>();
-		    for(int i=1; i<13; i++) {
-		    	Card.CardRank rank = Card.CardRank.values()[i];
-		    	
-		        for(int j=0; j<=4; j++) {
-		            Card card = new Card(rank, Card.Suit.values()[j]);
-		            this.deck.add(card);
-		        }
-		    }
-		    
-		Collections.shuffle(deck);
-		Iterator<Card> cardIterator = deck.iterator();
-	    while (cardIterator.hasNext())
-	    {
-	      Card aCard = (Card) cardIterator.next();
-	      System.out.println(aCard.getCardRank() + " of " + aCard.getSuit());
-	    }
-		
-	}
+class Deck extends ArrayList<Card> {
 
+    private int unShuffled;
 
-	
+    Deck() {
+        super(52);
+        fillDeck();
+        shuffle();
+    }
+
+    private void fillDeck() {
+        for (Card.ranks rank : Card.ranks.values()) {
+            for (Card.suits suit : Card.suits.values()) {
+                this.add(new Card(rank, suit));
+            }
+        }
+    }
+
+    public Card deal() {
+        if (isEmpty()) {
+            return null;
+        }
+        return this.get(--unShuffled);
+    }
+
+    public boolean isEmpty() {
+        return this.unShuffled <= 0;
+    }
+
+    public void shuffle() {
+        Random rand = new Random();
+        int r;
+        for (int k = size() - 1; k > 0; k--) {
+            r = rand.nextInt(k + 1);
+            this.set(k, this.set(r, this.get(k)));
+        }
+        unShuffled = size();
+    }
 }
